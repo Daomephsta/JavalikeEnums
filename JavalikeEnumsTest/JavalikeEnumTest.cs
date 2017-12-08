@@ -24,6 +24,60 @@ namespace JavalikeEnums.Tests
             Assert.AreEqual(0, OrdinalTestEnum2.TEST0.Ordinal);
             Assert.AreEqual(1, OrdinalTestEnum2.TEST1.Ordinal);
         }
+
+        [TestMethod]
+        public void TestTypeMismatch()
+        {
+            try
+            {
+                TypeMismatchTestEnumB.DummyInit();
+            }
+            catch(TypeInitializationException e)
+            {
+                Assert.IsInstanceOfType(e.InnerException, typeof(TypeMismatchException));
+                return;
+            }
+            Assert.Fail("Initialisation of TypeMismatchTestEnumB failed to throw a TypeMismatchException.");
+        }
+
+        [TestMethod]
+        public void TestInvalidModifiers()
+        {
+            bool privateTestPassed, instanceMemberTestPassed, mutableTestPassed;
+            privateTestPassed = instanceMemberTestPassed = mutableTestPassed = false;
+            try
+            {
+                PrivateConstantInvalidityTestEnum.DummyInit();
+            }
+            catch (TypeInitializationException e)
+            {
+                Assert.IsInstanceOfType(e.InnerException, typeof(InvalidModifiersException), "Expected inner exception to be of type InvalidModifiersException");
+                privateTestPassed = true;
+                Assert.AreEqual((e.InnerException as InvalidModifiersException).ModifierType, InvalidModifiersException.InvalidModifierType.PRIVATE);
+            }
+            try
+            {
+                InstanceMemberConstantInvalidityTestEnum.DummyInit();
+            }
+            catch (InvalidModifiersException e)
+            {
+                instanceMemberTestPassed = true;
+                Assert.AreEqual((e as InvalidModifiersException).ModifierType, InvalidModifiersException.InvalidModifierType.INSTANCE_MEMBER);
+            }
+            try
+            {
+                MutableConstantInvalidityTestEnum.DummyInit();
+            }
+            catch (TypeInitializationException e)
+            {
+                Assert.IsInstanceOfType(e.InnerException, typeof(InvalidModifiersException), "Expected inner exception to be of type InvalidModifiersException");
+                mutableTestPassed = true;
+                Assert.AreEqual((e.InnerException as InvalidModifiersException).ModifierType, InvalidModifiersException.InvalidModifierType.MUTABLE);
+            }
+            if (!privateTestPassed) Assert.Fail("Expected PrivateConstantInvalidityTestEnum.DummyInit() to throw an exception of type InvalidModifiersException");
+            if (!instanceMemberTestPassed) Assert.Fail("Expected InstanceMemberInvalidityTestEnum.DummyInit() to throw an exception of type InvalidModifiersException");
+            if (!mutableTestPassed) Assert.Fail("Expected MutableConstantInvalidityTestEnum.DummyInit() to throw an exception of type InvalidModifiersException");
+        }
     }
 
     public class NameTestEnum : JavalikeEnum<NameTestEnum>
@@ -44,5 +98,49 @@ namespace JavalikeEnums.Tests
     {
         public static readonly OrdinalTestEnum2 TEST0 = newConstant().create();
         public static readonly OrdinalTestEnum2 TEST1 = newConstant().create();
+    }
+
+    public class TypeMismatchTestEnumA : JavalikeEnum<TypeMismatchTestEnumA> {}
+
+    public class TypeMismatchTestEnumB : JavalikeEnum<TypeMismatchTestEnumA>
+    {
+        public static readonly TypeMismatchTestEnumA TEST0 = newConstant().create();
+        public static readonly TypeMismatchTestEnumA TEST1 = newConstant().create();
+
+        public static void DummyInit()
+        {
+            // Dummy method to initialise class
+        }
+    }
+
+    public class PrivateConstantInvalidityTestEnum : JavalikeEnum<PrivateConstantInvalidityTestEnum>
+    {
+        private static readonly PrivateConstantInvalidityTestEnum PRIVATE_TEST = newConstant().create();
+
+        public static void DummyInit()
+        {
+            // Dummy method to initialise class
+        }
+    }
+
+    public class InstanceMemberConstantInvalidityTestEnum : JavalikeEnum<InstanceMemberConstantInvalidityTestEnum>
+    {
+        public readonly InstanceMemberConstantInvalidityTestEnum INSTANCE_MEMBER_TEST = newConstant().create();
+
+        public static void DummyInit()
+        {
+            // Dummy method to initialise class
+            new InstanceMemberConstantInvalidityTestEnum();
+        }
+    }
+
+    public class MutableConstantInvalidityTestEnum : JavalikeEnum<MutableConstantInvalidityTestEnum>
+    {
+        public static MutableConstantInvalidityTestEnum MUTABLE_TEST = newConstant().create();
+
+        public static void DummyInit()
+        {
+            // Dummy method to initialise class
+        }
     }
 }
