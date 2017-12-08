@@ -8,9 +8,7 @@ using System.Text;
 
 namespace JavalikeEnums
 {
-    public abstract class JavalikeEnumBase { }
-
-    public abstract class JavalikeEnum<T> : JavalikeEnumBase where T : JavalikeEnumBase
+    public abstract class JavalikeEnum<T> where T : JavalikeEnum<T>
     {
         public string Name { get; internal set; }
         public int Ordinal { get; internal set; }
@@ -19,66 +17,62 @@ namespace JavalikeEnums
         {
             return new EnumConstantCreator<T>(callerName);
         }
+    }
 
-        public class EnumConstantCreator<U> where U : JavalikeEnumBase
+    public class EnumConstantCreator<U> where U : JavalikeEnum<U>
+    {
+        private static int nextOrdinal = 0;
+        private static Type currentType;
+
+        private readonly string name;
+
+        internal EnumConstantCreator(String name)
         {
-            private static int nextOrdinal = 0;
-            private static Type currentType;
+            this.name = name;
+        }
 
-            private readonly string name;
+        public U create(params object[] args)
+        {
+            StackFrame callerFrame = new StackFrame(1);
 
-            internal EnumConstantCreator(String name)
+            Type enumType = typeof(U);
+            if (enumType != currentType)
             {
-                this.name = name;
+                currentType = enumType;
+                nextOrdinal = 0;
             }
 
-            public U create(params object[] args)
-            {
-                StackFrame callerFrame = new StackFrame(1);
+            Type declaringType = callerFrame.GetMethod().DeclaringType;
+            if (declaringType != enumType) throw new TypeMismatchException(String.Format("The enum constant is of type {0}. This does not match the declaring type {1}", enumType, declaringType));
 
-                Type enumType = typeof(U);
-                if (enumType != currentType)
-                {
-                    currentType = enumType;
-                    nextOrdinal = 0;
-                }
+            CheckModifiers();
 
-                Type declaringType = callerFrame.GetMethod().DeclaringType;
-                if (declaringType != enumType) throw new TypeMismatchException(String.Format("The enum constant is of type {0}. This does not match the declaring type {1}", enumType, declaringType));
+            Type[] types = args.Select(o => o.GetType()).ToArray();
+            ConstructorInfo matchingCtor = enumType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, types, null);
+            if (matchingCtor == null)
+                throw new InvalidOperationException("class " + enumType + " does not have a constructor that takes args: " + String.Join(", ", (object[])types));
 
-                CheckModifiers();
+            JavalikeEnum<U> constant = (JavalikeEnum<U>) matchingCtor.Invoke(args);
+            constant.Name = this.name;
+            constant.Ordinal = nextOrdinal++;
+            
+            return (U) constant;
+        }
 
-                Type[] types = args.Select(o => o.GetType()).ToArray();
-                ConstructorInfo matchingCtor = enumType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, types, null);
-                if (matchingCtor == null)
-                    throw new InvalidOperationException("class " + enumType + " does not have a constructor that takes args: " + String.Join(", ", (object[])types));
+        private void CheckModifiers()
+        {
+            FieldInfo enumConstantField = currentType.GetField(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
-                JavalikeEnum<U> constant = (JavalikeEnum<U>) matchingCtor.Invoke(args);
-                constant.Name = this.name;
-                constant.Ordinal = nextOrdinal++;
+            if (enumConstantField == null) throw new MissingFieldException(String.Format("Could not find a field named {0} in the type {1}", name, currentType));
 
-                U constantU = constant as U;
-                if (constantU == null)
-                    /*TODO: Throw exception*/
-                    ;
-                return constantU;
-            }
+            Console.WriteLine(name);
+            Console.WriteLine(enumConstantField.IsPublic);
+            Console.WriteLine(enumConstantField.IsStatic);
+            Console.WriteLine(enumConstantField.IsInitOnly);
 
-            private void CheckModifiers()
-            {
-                FieldInfo enumConstantField = currentType.GetField(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-                
-                if (enumConstantField == null) throw new MissingFieldException(String.Format("Could not find a field named {0} in the type {1}", name, currentType));
-
-                Console.WriteLine(name);
-                Console.WriteLine(enumConstantField.IsPublic);
-                Console.WriteLine(enumConstantField.IsStatic);
-                Console.WriteLine(enumConstantField.IsInitOnly);
-
-                if (!enumConstantField.IsPublic) throw new InvalidModifiersException(InvalidModifiersException.InvalidModifierType.PRIVATE, "Invalid modifier 'private'. Enum constants must be public static readonly.");
-                if (!enumConstantField.IsStatic) throw new InvalidModifiersException(InvalidModifiersException.InvalidModifierType.INSTANCE_MEMBER, "Missing modifier 'static'. Enum constants must be public static readonly.");
-                if (!enumConstantField.IsInitOnly) throw new InvalidModifiersException(InvalidModifiersException.InvalidModifierType.MUTABLE, "Missing modifier 'readonly'. Enum constants must be public static readonly.");
-            }
+            if (!enumConstantField.IsPublic) throw new InvalidModifiersException(InvalidModifiersException.InvalidModifierType.PRIVATE, "Invalid modifier 'private'. Enum constants must be public static readonly.");
+            if (!enumConstantField.IsStatic) throw new InvalidModifiersException(InvalidModifiersException.InvalidModifierType.INSTANCE_MEMBER, "Missing modifier 'static'. Enum constants must be public static readonly.");
+            if (!enumConstantField.IsInitOnly) throw new InvalidModifiersException(InvalidModifiersException.InvalidModifierType.MUTABLE, "Missing modifier 'readonly'. Enum constants must be public static readonly.");
         }
     }
 }
