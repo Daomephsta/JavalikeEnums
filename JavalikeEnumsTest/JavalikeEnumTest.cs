@@ -78,6 +78,17 @@ namespace JavalikeEnums.Tests
             if (!instanceMemberTestPassed) Assert.Fail("Expected InstanceMemberInvalidityTestEnum.DummyInit() to throw an exception of type InvalidModifiersException");
             if (!mutableTestPassed) Assert.Fail("Expected MutableConstantInvalidityTestEnum.DummyInit() to throw an exception of type InvalidModifiersException");
         }
+
+        [TestMethod]
+        public void TestValues()
+        {
+            var values = EnumDataManager.Values(typeof(ValuesTestEnum));
+            Console.WriteLine(values.Count);
+            foreach (var value in values)
+            {
+                Console.WriteLine(value);
+            }
+        }
     }
 
     public class NameTestEnum : JavalikeEnum<NameTestEnum>
@@ -137,6 +148,18 @@ namespace JavalikeEnums.Tests
     public class MutableConstantInvalidityTestEnum : JavalikeEnum<MutableConstantInvalidityTestEnum>
     {
         public static MutableConstantInvalidityTestEnum MUTABLE_TEST = newConstant().create();
+
+        public static void DummyInit()
+        {
+            // Dummy method to initialise class
+        }
+    }
+
+    public class ValuesTestEnum : JavalikeEnum<ValuesTestEnum>
+    {
+        public static readonly ValuesTestEnum TEST1 = newConstant().create();
+        public static readonly ValuesTestEnum TEST2 = newConstant().create();
+        public static readonly ValuesTestEnum TEST3 = newConstant().create();
 
         public static void DummyInit()
         {

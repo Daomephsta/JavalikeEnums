@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnumDataManager.cs" />
     <Compile Include="EnumHelper.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="JavalikeEnum.cs" />
