@@ -82,12 +82,13 @@ namespace JavalikeEnums.Tests
         [TestMethod]
         public void TestValues()
         {
-            var values = EnumDataManager.Values(typeof(ValuesTestEnum));
-            Console.WriteLine(values.Count);
-            foreach (var value in values)
-            {
-                Console.WriteLine(value);
-            }
+            Assert.AreEqual(ValuesTestEnum.TEST1, ValuesTestEnum.Values[0]);
+            Assert.AreEqual(ValuesTestEnum.TEST2, ValuesTestEnum.Values[1]);
+            Assert.AreEqual(ValuesTestEnum.TEST3, ValuesTestEnum.Values[2]);
+
+            Assert.AreEqual(ValuesTestEnum.TEST1, ValuesTestEnum.GetConstant("TEST1"));
+            Assert.AreEqual(ValuesTestEnum.TEST2, ValuesTestEnum.GetConstant("TEST2"));
+            Assert.AreEqual(ValuesTestEnum.TEST3, ValuesTestEnum.GetConstant("TEST3"));
         }
     }
 
@@ -160,10 +161,5 @@ namespace JavalikeEnums.Tests
         public static readonly ValuesTestEnum TEST1 = newConstant().create();
         public static readonly ValuesTestEnum TEST2 = newConstant().create();
         public static readonly ValuesTestEnum TEST3 = newConstant().create();
-
-        public static void DummyInit()
-        {
-            // Dummy method to initialise class
-        }
     }
 }

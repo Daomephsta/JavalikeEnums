@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
 
 namespace JavalikeEnums
 {
-    public static class EnumDataManager
+    internal static class EnumDataManager
     {
         private static readonly IDictionary<Type, int> TYPE_TO_ORDINAL = new Dictionary<Type, int>();
         private static readonly IDictionary<Type, ConstantStore> TYPE_TO_CONSTANTS = new Dictionary<Type, ConstantStore>();
@@ -23,17 +24,17 @@ namespace JavalikeEnums
             return next;
         }
 
-        internal static object GetConstant(Type type, String constantName)
+        internal static object TryGetConstantInternal(Type type, String constantName)
+        {
+            return GetStore(type).TryGetConstant(constantName);
+        }
+
+        internal static object GetConstantInternal(Type type, String constantName)
         {
             return GetStore(type)[constantName];
         }
 
-        internal static void AddValue(Type type, string name, object value)
-        {
-            GetStore(type).AddConstant(name, value);
-        }
-
-        public static ICollection<object> Values(Type type)
+        internal static object[] GetValuesInternal(Type type)
         {
             return GetStore(type).Values;
         }
@@ -51,9 +52,10 @@ namespace JavalikeEnums
 
         private class ConstantStore
         {
-            internal ICollection<object> Values
+            internal object[] Values
             {
-                get => NAME_TO_CONSTANT.Values;
+                get;
+                private set;
             }
 
             private readonly IDictionary<string, object> NAME_TO_CONSTANT = new Dictionary<string, object>();
@@ -68,11 +70,26 @@ namespace JavalikeEnums
             public ConstantStore(Type type)
             {
                 this.type = type;
+                InitConstants();
             }
 
-            internal void AddConstant(string name, object value)
+            private void InitConstants()
             {
-                NAME_TO_CONSTANT.Add(name, value);
+                FieldInfo[] enumConstantFields = type.GetFields(BindingFlags.Public | BindingFlags.Static).Where(inf => inf.IsInitOnly && inf.FieldType == type).ToArray();
+                Values = new object[enumConstantFields.Length];
+                for(int f = 0; f < enumConstantFields.Length; f++)
+                {
+                    object constant = enumConstantFields[f].GetValue(null);
+                    Values[f] = constant;
+                    NAME_TO_CONSTANT.Add(enumConstantFields[f].Name, constant);
+                }
+                
+            }
+
+            public object TryGetConstant(string name)
+            {
+                NAME_TO_CONSTANT.TryGetValue(name, out object constant);
+                return constant;
             }
         }
     }

@@ -8,9 +8,19 @@ namespace JavalikeEnums
 {
     public static class EnumHelper
     {
-        public static ICollection<object> Values(Type type)
+        public static object[] Values(Type type)
         {
-            return EnumDataManager.Values(type);
+            return EnumDataManager.GetValuesInternal(type);
+        }
+
+        public static object GetConstant(Type type, string name)
+        {
+            return EnumDataManager.GetConstantInternal(type, name);
+        }
+
+        public static object TryGetConstant(Type type, string name)
+        {
+            return EnumDataManager.TryGetConstantInternal(type, name);
         }
     }
 }

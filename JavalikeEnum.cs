@@ -12,6 +12,21 @@ namespace JavalikeEnums
     {
         public string Name { get; internal set; }
         public int Ordinal { get; internal set; }
+        
+        public static object[] Values
+        {
+            get => EnumDataManager.GetValuesInternal(typeof(T));
+        }
+
+        public static object TryGetConstant(string name)
+        {
+            return EnumDataManager.TryGetConstantInternal(typeof(T), name);
+        }
+
+        public static object GetConstant(string name)
+        {
+            return EnumDataManager.GetConstantInternal(typeof(T), name);
+        }
 
         protected static EnumConstantCreator<T> newConstant([CallerMemberName] string callerName = "")
         {
@@ -48,7 +63,6 @@ namespace JavalikeEnums
             constant.Name = this.name;
             constant.Ordinal = EnumDataManager.GetNextOrdinal(enumType);
             
-            EnumDataManager.AddValue(enumType, constant.Name, constant);
             return (U) constant;
         }
 
