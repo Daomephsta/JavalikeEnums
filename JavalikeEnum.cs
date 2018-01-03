@@ -32,6 +32,11 @@ namespace JavalikeEnums
         {
             return new EnumConstantCreator<T>(callerName);
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public class EnumConstantCreator<U> where U : JavalikeEnum<U>
