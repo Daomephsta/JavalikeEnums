@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace JavalikeEnums
 {
@@ -28,7 +26,7 @@ namespace JavalikeEnums
             return EnumDataManager.GetConstantInternal(typeof(T), name);
         }
 
-        protected static EnumConstantCreator<T> newConstant([CallerMemberName] string callerName = "")
+        protected static EnumConstantCreator<T> NewConstant([CallerMemberName] string callerName = "")
         {
             return new EnumConstantCreator<T>(callerName);
         }
@@ -50,7 +48,7 @@ namespace JavalikeEnums
             this.enumType = typeof(U);
         }
 
-        public U create(params object[] args)
+        public U Create(params object[] args)
         {
             StackFrame callerFrame = new StackFrame(1);
 

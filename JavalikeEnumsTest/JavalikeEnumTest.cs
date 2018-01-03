@@ -94,30 +94,30 @@ namespace JavalikeEnums.Tests
 
     public class NameTestEnum : JavalikeEnum<NameTestEnum>
     {
-        public static readonly NameTestEnum UPPERCASE_TEST = newConstant().create();
-        public static readonly NameTestEnum lowercase_test = newConstant().create();
-        public static readonly NameTestEnum camelCaseTest = newConstant().create();
-        public static readonly NameTestEnum mIxEdCaSeTeSt = newConstant().create();
+        public static readonly NameTestEnum UPPERCASE_TEST = NewConstant().Create();
+        public static readonly NameTestEnum lowercase_test = NewConstant().Create();
+        public static readonly NameTestEnum camelCaseTest = NewConstant().Create();
+        public static readonly NameTestEnum mIxEdCaSeTeSt = NewConstant().Create();
     }
 
     public class OrdinalTestEnum : JavalikeEnum<OrdinalTestEnum>
     {
-        public static readonly OrdinalTestEnum TEST0 = newConstant().create();
-        public static readonly OrdinalTestEnum TEST1 = newConstant().create();
+        public static readonly OrdinalTestEnum TEST0 = NewConstant().Create();
+        public static readonly OrdinalTestEnum TEST1 = NewConstant().Create();
     }
 
     public class OrdinalTestEnum2 : JavalikeEnum<OrdinalTestEnum2>
     {
-        public static readonly OrdinalTestEnum2 TEST0 = newConstant().create();
-        public static readonly OrdinalTestEnum2 TEST1 = newConstant().create();
+        public static readonly OrdinalTestEnum2 TEST0 = NewConstant().Create();
+        public static readonly OrdinalTestEnum2 TEST1 = NewConstant().Create();
     }
 
     public class TypeMismatchTestEnumA : JavalikeEnum<TypeMismatchTestEnumA> {}
 
     public class TypeMismatchTestEnumB : JavalikeEnum<TypeMismatchTestEnumA>
     {
-        public static readonly TypeMismatchTestEnumA TEST0 = newConstant().create();
-        public static readonly TypeMismatchTestEnumA TEST1 = newConstant().create();
+        public static readonly TypeMismatchTestEnumA TEST0 = NewConstant().Create();
+        public static readonly TypeMismatchTestEnumA TEST1 = NewConstant().Create();
 
         public static void DummyInit()
         {
@@ -127,7 +127,7 @@ namespace JavalikeEnums.Tests
 
     public class PrivateConstantInvalidityTestEnum : JavalikeEnum<PrivateConstantInvalidityTestEnum>
     {
-        private static readonly PrivateConstantInvalidityTestEnum PRIVATE_TEST = newConstant().create();
+        private static readonly PrivateConstantInvalidityTestEnum PRIVATE_TEST = NewConstant().Create();
 
         public static void DummyInit()
         {
@@ -137,7 +137,7 @@ namespace JavalikeEnums.Tests
 
     public class InstanceMemberConstantInvalidityTestEnum : JavalikeEnum<InstanceMemberConstantInvalidityTestEnum>
     {
-        public readonly InstanceMemberConstantInvalidityTestEnum INSTANCE_MEMBER_TEST = newConstant().create();
+        public readonly InstanceMemberConstantInvalidityTestEnum INSTANCE_MEMBER_TEST = NewConstant().Create();
 
         public static void DummyInit()
         {
@@ -148,7 +148,7 @@ namespace JavalikeEnums.Tests
 
     public class MutableConstantInvalidityTestEnum : JavalikeEnum<MutableConstantInvalidityTestEnum>
     {
-        public static MutableConstantInvalidityTestEnum MUTABLE_TEST = newConstant().create();
+        public static MutableConstantInvalidityTestEnum MUTABLE_TEST = NewConstant().Create();
 
         public static void DummyInit()
         {
@@ -158,8 +158,8 @@ namespace JavalikeEnums.Tests
 
     public class ValuesTestEnum : JavalikeEnum<ValuesTestEnum>
     {
-        public static readonly ValuesTestEnum TEST1 = newConstant().create();
-        public static readonly ValuesTestEnum TEST2 = newConstant().create();
-        public static readonly ValuesTestEnum TEST3 = newConstant().create();
+        public static readonly ValuesTestEnum TEST1 = NewConstant().Create();
+        public static readonly ValuesTestEnum TEST2 = NewConstant().Create();
+        public static readonly ValuesTestEnum TEST3 = NewConstant().Create();
     }
 }
